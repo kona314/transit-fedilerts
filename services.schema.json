@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "definitions": {
+        "service": {
+            "properties": {
+                "identifier": {
+                    "type": "string",
+                    "description": "Stable identifier for the feed. This must be unique across all defined feeds. Will become the 'username' of the account, so should be descriptive to users."
+                },
+                "serviceName": {
+                    "type": "string",
+                    "description": "The name of the included transit service. Will typically be an agency name."
+                },
+                "gtfsRtAlerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/feedUrl"
+                    },
+                    "description": "The URL(s) of the GTFS-RT alerts feeds included here."
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "A fitting display name for the feed. Will be shown to users as the account name. If not provided, will default to `{serviceName} Alerts`."
+                }
+            },
+            "required": ["identifier", "gtfsRtAlerts", "serviceName"]
+        },
+        "feedUrl": {
+            "description": "A place a feed can be found. Can be defined as just a string for the URL or an object with headers defined.",
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "properties": {
+                        "url": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["url"]
+                }
+            ]
+        }
+    },
+    "properties": {
+        "services": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/service"
+            }
+        }
+    },
+    "required": ["services"]
+}
