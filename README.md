@@ -14,7 +14,7 @@ The "official" instance lives at [transit.alerts.social](https://transit.alerts.
 - Compile TypeScript and run
 
 ## HTTPS/SSL
-Transit Fedilerts starts up as an HTTP server when `NODE_ENV === 'production'`, but ActivityPub requires HTTPS. A reverse proxy, such as nginx, is required to handle SSL. In development, provide paths in the `SSL_CERT` and `SSL_KEY` environment variables.
+Transit Fedilerts starts up as an HTTP server when `NODE_ENV === 'production'`, but ActivityPub requires HTTPS. A reverse proxy, such as nginx, is required to handle SSL (see more below). In development, provide paths in the `SSL_CERT` and `SSL_KEY` environment variables.
 
 
 ## Environment Variables 
@@ -22,12 +22,12 @@ Transit Fedilerts uses `dotenv` for environment variables.
 | Name | Required? | Description |
 |------|-----------|-------------|
 | `DOMAIN` | X | Domain name for the server |
-| `SSL_CERT` | X | Path to an SSL certificate, used in development mode |
-| `SSL_KEY` | X | Path to an SSL public key, used in development mode |
 | `MONGO_DB_NAME` | | The name of the MongoDB db to use. Defaults to `transitFedilerts` |
 | `MONGO_URI` | | The connection URI for the Mongo instance. Defaults to `mongodb://localhost:27017` |
 | `PORT` | | Port to run the server on. Defaults to `8080` |
 | `SERVICES_JSON` | | Custom path to a services configuration file. Defaults to `services.json` |
+| `SSL_CERT` | | Path to an SSL certificate, used in development mode |
+| `SSL_KEY` | | Path to an SSL public key, used in development mode |
 
 
 # Roadmap
@@ -41,5 +41,5 @@ The following features are not supported but are on my radar for the future—pu
 - Improved Mastodon interopability
   - Implement profile metadata: Official agency URLs, link to server hosting the instance, more might fit here
   - Implement certain API endpoints, like [account statuses](https://docs.joinmastodon.org/methods/accounts/#statuses) and the [public timeline](https://docs.joinmastodon.org/methods/timelines/#public)
-- Reverse proxy support 
-  - The initial commits had an implementation that mostly worked, only if the `host` was maintained when passed from the proxy, but there were still some harder-to-identify issues and this was removed
+- Improved reverse proxy support 
+  - The `host` must be maintained when passed from the proxy
