@@ -14,12 +14,16 @@ export default async function syncFeedsFromConfigFile(file: ConfigFile, apex: Ac
         }))
     })
     .then(data => {
-        // TODO: Outbox message announcing changes
-        return Promise.all(data.map(a => {
+        return Promise.all(data.map(async (a) => {
             if (a.existingObject != null) {
                 const changes = updatedFeedValues(a.actor, a.existingObject)
                 if (changes) {
-                    return apex.store.updateObject(changes, a.actor.id, false)
+                    const updated = await apex.store.updateObject(changes, a.actor.id, false)
+                    const activity = await apex.buildActivity('Update', a.actor.id, "https://www.w3.org/ns/activitystreams#Public", {
+                        object: a.actor.id, 
+                        cc: a.actor.id + "/followers",
+                    })
+                    return apex.addToOutbox(updated, activity)
                 } else {
                     return Promise.resolve()
                 }

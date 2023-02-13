@@ -81,6 +81,8 @@ declare module 'activitypub-express' {
 
     interface ApexStore extends AnyArgs {
         db : Db
+        updateObject : (obj: any, actorId: string, fullReplace: boolean) => Promise<any>,
+        saveObject : (obj: any) => Promise<any>,
     }
 
     type ActivityPubExpress = {
