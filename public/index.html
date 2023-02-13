@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Transit Fedilerts</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container-fluid pt-4 ps-4 pe-4">
+            <div class="row justify-content-md-center">
+                <div class="col col-12 col-md-4">
+                    <h1>Transit Fedilerts</h1>
+                    <p>
+                        <i>ActivityPub-compliant (Mastodon-compatible) transit alerts generated from GTFS-realtime Service Alerts</i>
+                    </p>
+                    <p>
+                        <a href="https://github.com/kona314/transit-fedilerts">Source code and more info on GitHub</a>
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-12 col-md-4 pt-4">
+                    <h3>What is this? How does it work?</h3>
+                    <p>
+                        Transit Fedilerts fetches service alerts from transit agencies and publishes them via ActivityPub, essentially creating a series of bot accounts for alerts for various transit services. I maintain an "official" instance at <a href="https://transit.alerts.social">transit.alerts.social</a>, but this open-source software can be deployed by anyone. 
+                    </p>
+                    <p>
+                        The service leverages the <a href="https://gtfs.org/realtime/">GTFS-realtime</a> data standard for retrieving transit alerts. 
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-12 col-md-4 pt-4">
+                    <h3>Transit Services Available</h3>
+                    <p>The following transit services are available at this instance and can be followed in your ActivityPub or Mastodon app of choice. Remember to use the format <code>username</code>@<b><span id="domain"><code>this domain</code></span></b></p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Username</th>
+                                <th>Lifetime alerts seen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-table-body">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-5 mb-4">
+                <div class="col text-center secondary">
+                    <p class="small text-muted">Developed by <a href="https://konafarry.com">Kona Farry</a> in Everett, Washington. <a href="https://social.ridetrans.it/users/kona" ref="me">Follow me on Mastodon</a></p>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    </body>
+
+    <script>
+        fetch("/fedilerts/services").then(d => d.json())
+        .then(d => {
+            document.getElementById("domain").innerText = d.domain 
+            const tbody = document.getElementById("services-table-body")
+            d.services.forEach(account => {
+                const row = document.createElement("tr")
+                const name = document.createElement("td")
+                name.innerText = account.name 
+                const username = document.createElement("td")
+                username.innerText = account.id 
+                const count = document.createElement("td")
+                count.innerText = account.posts 
+                row.appendChild(name)
+                row.appendChild(username)
+                row.appendChild(count)
+                tbody.appendChild(row)
+            })
+        })
+        .catch(console.error)
+    </script>
+</html>

@@ -118,20 +118,26 @@ app.get('/fedilerts/services', async (req, res) => {
         { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ['$actor', 0] }, '$$ROOT'] } } },
         { $project: { _id: 0, _meta: 0, actor: 0 } }
     ])
-    .sort({ postCount: -1 })
     .toArray()
-    .then(groups => apex.toJSONLD({
-        id: `https://${process.env.DOMAIN}/fedilerts/services`,
-        type: 'OrderedCollection',
-        totalItems: groups.length,
-        orderedItems: groups
+    .then(services => services.map(s => {
+        return {
+            id: s.preferredUsername[0],
+            name: s.name[0],
+            posts: s.postCount,
+        }
     }))
-    .then(groups => res.json(groups))
+    .then(s => s.sort((a,b) => a.name.localeCompare(b.name)))
+    .then(data => res.json({
+        domain: process.env.DOMAIN,
+        services: data,
+    }))
     .catch(err => {
         console.log(err.message)
         return res.status(500).send()
     })
 })
+
+app.use('/', express.static('public'))
 
 const scheduler = new ToadScheduler()
 
