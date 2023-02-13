@@ -7,7 +7,7 @@ import {transit_realtime} from 'gtfs-realtime-bindings'
 export default async function generateActivityForAlert(alert: transit_realtime.IAlert, actor: string, apex: ActivityPubExpress) {
     const desc = alert.descriptionText?.translation?.[0]?.text 
     const head = alert.headerText?.translation?.[0]?.text
-    const alertContent = [head, desc].filter(t => t).join("<br><br>")
+    const alertContent = [head, desc].filter(t => t).join("<br><br>").replace(/(?:\r\n|\r|\n)/g, "<br>")
     const start = alert.activePeriod?.[0]?.start
     const now = new Date()
     const alertDate = start ? new Date(Number(start) * 1000) : now 
