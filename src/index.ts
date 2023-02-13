@@ -7,7 +7,6 @@ import ActivityPubExpress, { ApexRoutes } from 'activitypub-express'
 import parseConfig from './gtfsrt/parseConfig'
 import getJobs from './gtfsrt/getJobs'
 import { ToadScheduler } from 'toad-scheduler'
-import http from 'http'
 import https from 'https'
 import fs from 'fs'
 
@@ -157,19 +156,10 @@ client.connect()
     })
     .then(([_v, jobs]) => jobs.forEach(j => scheduler.addIntervalJob(j)))
     .then(() => {
-        if (process.env.NODE_ENV === "production") {
-            if (process.env.PROXY_MODE) {
-                const mode = parseProxyMode(process.env.PROXY_MODE)
-                app.set('trust proxy', mode)
-            }
-            const server = http.createServer(app)
-            server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
-        } else {
-            const server = https.createServer({
-                key: process.env.SSL_KEY && fs.readFileSync(process.env.SSL_KEY),
-                cert: process.env.SSL_CERT && fs.readFileSync(process.env.SSL_CERT),
-            }, app)
-            server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
-        }
+        const server = https.createServer({
+            key: process.env.SSL_KEY && fs.readFileSync(process.env.SSL_KEY),
+            cert: process.env.SSL_CERT && fs.readFileSync(process.env.SSL_CERT),
+        }, app)
+        server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
     })
     .catch(console.error)
