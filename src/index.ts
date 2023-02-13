@@ -158,12 +158,12 @@ client.connect()
     .then(([_v, jobs]) => jobs.forEach(j => scheduler.addIntervalJob(j)))
     .then(() => {
         if (process.env.NODE_ENV === "production") {
-            const server = http.createServer(app)
-            server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
             if (process.env.PROXY_MODE) {
                 const mode = parseProxyMode(process.env.PROXY_MODE)
                 app.set('trust proxy', mode)
             }
+            const server = http.createServer(app)
+            server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
         } else {
             const server = https.createServer({
                 key: process.env.SSL_KEY && fs.readFileSync(process.env.SSL_KEY),
