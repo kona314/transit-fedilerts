@@ -156,7 +156,12 @@ client.connect()
             getJobs(file.services, apex, client),
         ])
     })
-    .then(([_v, jobs]) => jobs.forEach(j => scheduler.addIntervalJob(j)))
+    .then(([_v, jobs]) => {
+        if (process.env.NO_FETCH_ALERTS) {
+            return
+        }
+        jobs.forEach(j => scheduler.addIntervalJob(j))
+    })
     .then(() => {
         if (process.env.NODE_ENV === "production") {
             if (process.env.PROXY_MODE) {

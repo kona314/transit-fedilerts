@@ -24,6 +24,7 @@ Transit Fedilerts uses `dotenv` for environment variables.
 | `DOMAIN` | X | Domain name for the server |
 | `MONGO_DB_NAME` | | The name of the MongoDB db to use. Defaults to `transitFedilerts` |
 | `MONGO_URI` | | The connection URI for the Mongo instance. Defaults to `mongodb://localhost:27017` |
+| `NO_FETCH_ALERTS` | | When present, the alert fetchers won't run. Useful for testing other components |
 | `PORT` | | Port to run the server on. Defaults to `8080` |
 | `SERVICES_JSON` | | Custom path to a services configuration file. Defaults to `services.json` |
 | `SSL_CERT` | | Path to an SSL certificate, used in development mode |
