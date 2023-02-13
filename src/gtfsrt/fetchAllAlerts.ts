@@ -1,7 +1,7 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
-import {ServiceFeed, FeedUrl} from "../models/config"
+import {Service, FeedUrl} from "../models/config"
 
-export default async function fetchAllAlerts(service: ServiceFeed) {
+export default async function fetchAllAlerts(service: Service) {
     return Promise.all(
         service.gtfsRtAlerts.map(a => fetchFeed(a))
     )

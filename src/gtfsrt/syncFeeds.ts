@@ -3,7 +3,7 @@ import ConfigFile from '../models/config'
 
 export default async function syncFeedsFromConfigFile(file: ConfigFile, apex: ActivityPubExpress) {
     return Promise.all(
-        file.services.map(feed => apex.createActor(feed.identifier, feed.displayName ?? (feed.serviceName + " Alerts"), "Automated service alerts for " + feed.serviceName, null))
+        file.services.map(service => apex.createActor(service.identifier, service.displayName ?? (service.serviceName + " Alerts"), "Automated service alerts for " + service.serviceName, null))
     )
     .then((actors) => {
         return Promise.all(actors.map(async (a) => {
