@@ -134,6 +134,15 @@ app.get('/fedilerts/services', async (req, res) => {
 
 const scheduler = new ToadScheduler()
 
+function parseProxyMode(proxyMode: string) {
+    try {
+        // boolean or number
+        return JSON.parse(proxyMode)
+    } catch (ignore) {}
+    // string
+    return proxyMode
+}
+
 client.connect()
     .then(() => {
         apex.store.db = client.db(process.env.MONGO_DB_NAME ?? 'transitFedilerts')
@@ -152,7 +161,8 @@ client.connect()
             const server = http.createServer(app)
             server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
             if (process.env.PROXY_MODE) {
-                app.set('trust proxy', process.env.PROXY_MODE)
+                const mode = parseProxyMode(process.env.PROXY_MODE)
+                app.set('trust proxy', mode)
             }
         } else {
             const server = https.createServer({
