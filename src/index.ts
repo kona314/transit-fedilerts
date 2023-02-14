@@ -116,6 +116,7 @@ app.get('/fedilerts/services', async (req, res) => {
         { $lookup: { from: 'objects', localField: '_id', foreignField: 'id', as: 'actor' } },
         // merge joined actor up
         { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ['$actor', 0] }, '$$ROOT'] } } },
+        { $match: { _meta: { $exists: true } } },
         { $project: { _id: 0, _meta: 0, actor: 0 } }
     ])
     .toArray()
