@@ -26,7 +26,8 @@ export default async function syncServicesFromConfigFile(file: ConfigFile, apex:
             if (a.existingObject != null) {
                 const changes = updatedServiceValues(a.actor, a.existingObject)
                 if (changes) {
-                    const updated = await apex.store.updateObject(changes, a.actor.id, false)
+                    await apex.store.updateObject(changes, a.actor.id, false)
+                    const updated = await apex.store.getObject(a.actor.id, true)
                     const activity = await apex.buildActivity('Update', a.actor.id, "https://www.w3.org/ns/activitystreams#Public", {
                         object: a.actor.id, 
                         cc: a.actor.id + "/followers",
