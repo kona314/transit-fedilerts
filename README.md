@@ -9,7 +9,7 @@ The "official" instance lives at [transit.alerts.social](https://transit.alerts.
 # Usage 
 - Install `transit-fedilerts` and depdencies
 - Define the agencies/services/feeds to include in `services.json`
-  - The structure of this file is documented in the JSON schema format at `services.schema.json`
+  - The structure of this file is documented in the JSON schema format at `services.schema.json` (example below)
   - While the system looks for `services.json` by default, you can define a custom path with the environment variable `SERVICES_JSON`
 - Compile TypeScript and run
 
@@ -31,16 +31,73 @@ Transit Fedilerts uses `dotenv` for environment variables.
 | `SSL_KEY` | | Path to an SSL public key, used in development mode |
 
 
+## Example `services.json`
+The config file is intended to be flexible and handle multiple use cases. A service is defined as a single transit entity and translates into an account users can follow, and a feed as a GTFS-rt alerts feed itself. This separation will allow for complex use cases, such as agencies whose alerts might be in multiple feeds or feeds which may contain alerts from multiple agencies.
+
+Here's a simple implementation for a single agency with a single feed:
+```
+{
+    "services": [
+        {
+            "identifier": "commtrans",
+            "name": "Community Transit",
+            "iconUrl": "/commtrans.jpg"
+        }
+    ],
+    "feeds": [
+        {
+            "url": "https://s3.amazonaws.com/commtrans-realtime-prod/alerts.pb",
+            "relatesTo": ["commtrans"]
+        }
+    ]
+}
+```
+Included in CT's feed are alerts for several Sound Transit routes. Perhaps we want to create a separate Sound Transit feed that includes just those routes: 
+```
+{
+    "services": [
+        {
+            "identifier": "commtrans",
+            "name": "Community Transit",
+            "iconUrl": "/commtrans1.jpg"
+        },
+        {
+            "identifier": "soundtransit",
+            "name": "Sound Transit (CT)",
+            "iconUrl": "/soundtransit-ct1.jpg"
+        }
+    ],
+    "feeds": [
+        {
+            "url": "https://s3.amazonaws.com/commtrans-realtime-prod/alerts.pb",
+            "relatesTo": [
+                "commtrans",
+                {
+                    "identifier": "soundtransit",
+                    "criteria": [
+                        {
+                            "routeId": {
+                                "test": "^5\\d\\d$"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+This will keep all CT-operated service in `commtrans` and also push anything on an ST route to `soundtransit`. We could also add feeds for King County Metro and Pierce Transit (the other operators of ST Express buses) and push those to `soundtransit` based on similar criteria, optionally with additional services for each of them.
+
+
 # Roadmap
 The following features are not supported but are on my radar for the future—pull requests that start on these are encouraged. They are in no order.
-- Web interface for discovery of accounts to follow and prior alerts
-- Use single URL for multiple services
-  - Current implementation will hit a feed URL every time it's defined, ideal solution is fetch once and distribute
-  - Is tied to having a way to filter out alerts in a feed based on criteria, e.g. `alert.informed_entity.agency_id`
-- Create accounts for individual routes
-  - This one's a big lift: Have to ingest and monitor the GTFS-static feed, map route IDs to names, map stops to routes, etc., to say nothing of the actual ActivityPub elements from there
+- Web interface for prior alerts
+  - Currently only show a (very basic) list of services
+- Create actors for individual routes
+  - This one's a big lift: Have to ingest and monitor the GTFS-static feed, map route IDs to names, map stops to routes, etc., as well as send a whole lot of messages per alert.
 - Improved Mastodon interopability
-  - Implement profile metadata: Official agency URLs, link to server hosting the instance, more might fit here
+  - Implement profile metadata: Official agency URLs? Link to server hosting the instance? More might fit here
   - Implement certain API endpoints, like [account statuses](https://docs.joinmastodon.org/methods/accounts/#statuses) and the [public timeline](https://docs.joinmastodon.org/methods/timelines/#public)
 - Improved reverse proxy support 
   - The `host` must be maintained when passed from the proxy
