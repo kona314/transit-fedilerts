@@ -8,10 +8,29 @@ export interface Service {
     name : string 
     displayName? : string 
     iconUrl? : string 
+    summaryNote? : string 
 }
 
 export interface Feed {
     url : string 
     headers?: any 
-    relatesTo : string[]
+    relatesTo : FeedRelationToService[]
 }
+
+export interface FeedServiceRelationRegexCriteriaValue {
+    test: string 
+    flags?: string
+}
+
+export type FeedServiceRelationCriteriaValue = string | FeedServiceRelationRegexCriteriaValue
+
+export interface FeedServiceRelationCriteria {
+    [entityField: string]: FeedServiceRelationCriteriaValue
+}
+
+export interface FeedRelationToServiceComplex {
+    identifier: string 
+    criteria?: FeedServiceRelationCriteria[]
+}
+
+export type FeedRelationToService = string | FeedRelationToServiceComplex

@@ -10,7 +10,9 @@ export default async function syncServicesFromConfigFile(file: ConfigFile, apex:
             if (icon?.url.startsWith("/")) {
                 icon.url = "https://" + process.env.DOMAIN + "/f" + icon.url
             }
-            return apex.createActor(service.identifier, service.displayName ?? (service.name + " Alerts"), "Automated service alerts for " + service.name, icon)
+            const summary = "Automated service alerts for " + service.name + (service.summaryNote ? ". " + service.summaryNote : "")
+            const displayName = service.displayName ?? (service.name + " Alerts")
+            return apex.createActor(service.identifier, displayName, summary, icon)
         })
     )
     .then((actors) => {
@@ -86,8 +88,9 @@ function checkConfigValid(file: ConfigFile) {
     }
     for (let feed of file.feeds) {
         for (let s of feed.relatesTo) {
-            if (!serviceIds.has(s)) {
-                throw new Error("feed URL " + feed.url + " relates to service ID " + s + ", which does not exist")
+            const id = typeof s == "string" ? s : s.identifier
+            if (!serviceIds.has(id)) {
+                throw new Error("feed URL " + feed.url + " relates to service ID " + id + ", which does not exist")
             }
         }
         if (feed.relatesTo.length == 0) {

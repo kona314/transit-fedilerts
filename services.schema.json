@@ -18,6 +18,10 @@
                 "iconUrl": {
                     "type": "string",
                     "description": "The URL for an icon (profile picture) to use for this service. To specify an image hosted on this server, place it in the `public/files` subfolder and populate this property with `/{filename}`."
+                },
+                "summaryNote": {
+                    "type": "string",
+                    "description": "Text to append to the end of the summary/bio text. It will always start with \"Automated service alerts for `{name}`\", but a period and space will be added if this value is defined, i.e. \"Automated service alerts for Community Transit. `{note}`"
                 }
             },
             "required": ["identifier", "name"]
@@ -35,13 +39,93 @@
                 },
                 "relatesTo": {
                     "type": "array",
-                    "description": "All services this feed should populate. TODO: Add conditions.",
+                    "description": "All services this feed should populate. A service defined as just the service ID will receive all alerts from this feed. If defined as an object with a valid `criteria` property, only alerts that match the criteria will be sent to that service.",
                     "items": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/definitions/feedRelationToService"
+                            }
+                        ]
                     }
                 }
             },
             "required": ["url", "relatesTo"]
+        },
+        "feedRelationToService": {
+            "properties": {
+                "identifier": {
+                    "type": "string",
+                    "description": "The identifier of the related service"
+                },
+                "criteria": {
+                    "type": "array",
+                    "description": "Criteria for an alert to be considered as related to this feed. Any criterion in this array being met will result in a match.",
+                    "items": {
+                        "$ref": "#/definitions/feedServiceRelationshipCritera"
+                    }
+                }
+            },
+            "required": ["identifier"]
+        },
+        "feedServiceRelationshipCritera": {
+            "properties": {
+                "agencyId": {
+                    "$ref": "#/definitions/criteriaValue",
+                    "description": "An agency ID in the alert's informed entities"
+                },
+                "routeId": {
+                    "$ref": "#/definitions/criteriaValue",
+                    "description": "A route ID in the alert's informed entities"
+                },
+                "routeType": {
+                    "$ref": "#/definitions/criteriaValue",
+                    "description": "A route type in the alert's informed entities"
+                },
+                "directionId": {
+                    "$ref": "#/definitions/criteriaValue",
+                    "description": "A direction ID in the alert's informed entities. Per spec, must be used with a `routeId`"
+                },
+                "stopId": {
+                    "$ref": "#/definitions/criteriaValue",
+                    "description": "A stop ID in the alert's informed entities"
+                }
+            }
+        },
+        "criteriaValue": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/criteriaItem"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/criteriaItem"
+                    }
+                }
+            ]
+        },
+        "criteriaItem": {
+            "anyOf": [
+                {
+                    "description": "A literal value to match exactly",
+                    "type": "string"
+                },
+                {
+                    "description": "A regular expression to test against",
+                    "properties": {
+                        "test": {
+                            "type": "string"
+                        },
+                        "flags": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["test"]
+                }
+            ]
         }
     },
     "properties": {
