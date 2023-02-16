@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv' 
 dotenv.config()
 import express from 'express'
-import syncFeedsFromConfigFile from './gtfsrt/syncFeeds'
+import syncServicesFromConfigFile from './gtfsrt/syncServices'
 import { MongoClient } from 'mongodb'
 import ActivityPubExpress, { ApexRoutes } from 'activitypub-express'
 import parseConfig from './gtfsrt/parseConfig'
@@ -138,6 +138,7 @@ app.get('/fedilerts/services', async (req, res) => {
     })
 })
 
+app.use('/f', express.static('public/files'))
 app.use('/', express.static('public'))
 
 const scheduler = new ToadScheduler()
@@ -159,8 +160,8 @@ client.connect()
     .then(() => parseConfig())
     .then((file) => {
         return Promise.all([
-            syncFeedsFromConfigFile(file, apex),
-            getJobs(file.services, apex, client),
+            syncServicesFromConfigFile(file, apex),
+            getJobs(file.feeds, apex, client),
         ])
     })
     .then(([_v, jobs]) => {

@@ -7,42 +7,41 @@
                     "type": "string",
                     "description": "Stable identifier for the feed. This must be unique across all defined feeds. Will become the 'username' of the account, so should be descriptive to users."
                 },
-                "serviceName": {
+                "name": {
                     "type": "string",
                     "description": "The name of the included transit service. Will typically be an agency name."
-                },
-                "gtfsRtAlerts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/feedUrl"
-                    },
-                    "description": "The URL(s) of the GTFS-RT alerts feeds included here."
                 },
                 "displayName": {
                     "type": "string",
                     "description": "A fitting display name for the feed. Will be shown to users as the account name. If not provided, will default to `{serviceName} Alerts`."
+                },
+                "iconUrl": {
+                    "type": "string",
+                    "description": "The URL for an icon (profile picture) to use for this service. To specify an image hosted on this server, place it in the `public/files` subfolder and populate this property with `/{filename}`."
                 }
             },
-            "required": ["identifier", "gtfsRtAlerts", "serviceName"]
+            "required": ["identifier", "name"]
         },
-        "feedUrl": {
-            "description": "A place a feed can be found. Can be defined as just a string for the URL or an object with headers defined.",
-            "anyOf": [
-                {
-                    "type": "string"
+        "feed": {
+            "description": "A place a feed can be found and any related services",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "description": "The URL of the GTFS-realtime alerts feed."
                 },
-                {
-                    "properties": {
-                        "url": {
-                            "type": "string"
-                        },
-                        "headers": {
-                            "type": "object"
-                        }
-                    },
-                    "required": ["url"]
+                "headers": {
+                    "type": "object",
+                    "description": "Any headers to provide with each request. Some feeds require `User-Agent` or `X-Api-Key`, for instance."
+                },
+                "relatesTo": {
+                    "type": "array",
+                    "description": "All services this feed should populate. TODO: Add conditions.",
+                    "items": {
+                        "type": "string"
+                    }
                 }
-            ]
+            },
+            "required": ["url", "relatesTo"]
         }
     },
     "properties": {
@@ -51,7 +50,13 @@
             "items": {
                 "$ref": "#/definitions/service"
             }
+        },
+        "feeds": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/feed"
+            }
         }
     },
-    "required": ["services"]
+    "required": ["services", "feeds"]
 }

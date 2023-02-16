@@ -1,17 +1,17 @@
 export default interface ConfigFile {
     services : Service[]
+    feeds : Feed[]
 }
-
-export interface FeedUrlWithData {
-    url: string
-    headers?: any
-}
-
-export type FeedUrl = string | FeedUrlWithData
 
 export interface Service {
     identifier : string 
-    gtfsRtAlerts : FeedUrl[]
-    serviceName : string 
+    name : string 
     displayName? : string 
+    iconUrl? : string 
+}
+
+export interface Feed {
+    url : string 
+    headers?: any 
+    relatesTo : string[]
 }

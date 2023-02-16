@@ -1,16 +1,8 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
-import {Service, FeedUrl} from "../models/config"
+import {Feed} from "../models/config"
 
-export default async function fetchAllAlerts(service: Service) {
-    return Promise.all(
-        service.gtfsRtAlerts.map(a => fetchFeed(a))
-    )
-}
-
-async function fetchFeed(gtfsRtAlertsUrl: FeedUrl) {
-    const url = typeof gtfsRtAlertsUrl == "string" ? gtfsRtAlertsUrl : gtfsRtAlertsUrl.url
-    const headers = typeof gtfsRtAlertsUrl == "string" ? undefined : gtfsRtAlertsUrl.headers
-    const res = await fetch(url, { headers })
+export default async function fetchFeed(feed: Feed) {
+    const res = await fetch(feed.url, { headers: feed.headers })
     if (!res.ok) {
         const error = new Error(`${res.url}: ${res.status} ${res.statusText}`)
         throw error
