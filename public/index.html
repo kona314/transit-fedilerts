@@ -39,6 +39,7 @@
                                 <th>Service</th>
                                 <th>Username</th>
                                 <th>Lifetime alerts seen</th>
+                                <th>Notes</th>
                             </tr>
                         </thead>
                         <tbody id="services-table-body">
@@ -69,9 +70,12 @@
                 username.innerText = account.id 
                 const count = document.createElement("td")
                 count.innerText = account.posts 
+                const notes = document.createElement("td")
+                notes.innerText = account.note || ""
                 row.appendChild(name)
                 row.appendChild(username)
                 row.appendChild(count)
+                row.appendChild(notes)
                 tbody.appendChild(row)
             })
         })

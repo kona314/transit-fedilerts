@@ -10,6 +10,7 @@ import { ToadScheduler } from 'toad-scheduler'
 import http from 'http'
 import https from 'https'
 import fs from 'fs'
+import { Service } from './models/config'
 
 const app = express()
 const port = process.env.PORT ?? 8080
@@ -125,6 +126,7 @@ app.get('/fedilerts/services', async (req, res) => {
             id: s.preferredUsername[0],
             name: s.name[0],
             posts: s.postCount,
+            note: servicesById[s.preferredUsername[0]]?.summaryNote,
         }
     }))
     .then(s => s.sort((a,b) => a.name.localeCompare(b.name)))
@@ -152,6 +154,8 @@ function parseProxyMode(proxyMode: string) {
     return proxyMode
 }
 
+let servicesById : {[serviceId: string]: Service} = {}
+
 client.connect()
     .then(() => {
         apex.store.db = client.db(process.env.MONGO_DB_NAME ?? 'transitFedilerts')
@@ -159,6 +163,7 @@ client.connect()
     })
     .then(() => parseConfig())
     .then((file) => {
+        file.services.forEach(s => servicesById[s.identifier] = s)
         return Promise.all([
             syncServicesFromConfigFile(file, apex),
             getJobs(file.feeds, apex, client),
