@@ -100,7 +100,7 @@ function checkConfigValid(file: ConfigFile) {
         }
     }
     if (serviceIds.size != serviceIdsWithFeeds.size) {
-        const servicesWithNoFeeds = [...serviceIds].filter(s => !serviceIdsWithFeeds.has(s))
+        const servicesWithNoFeeds = Array.from(serviceIds).filter(s => !serviceIdsWithFeeds.has(s))
         console.warn(`service(s) ${servicesWithNoFeeds.join(',')} do(es) not have related feeds`)
     }
 }

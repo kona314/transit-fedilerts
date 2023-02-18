@@ -2,11 +2,9 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node16",
         "outDir": "./dist",
         "sourceMap": true,
         "strict": true,
-        "target": "ES2020",
         "typeRoots": ["node_modules/@types", "src/typings"]
     },
     "include": ["src/*"]
