@@ -191,4 +191,7 @@ client.connect()
             server.listen(port, () => console.log(`Transit Fedilerts listening on port ${port}`))
         }
     })
-    .catch(console.error)
+    .catch(err => {
+        console.error(err)
+        process.exit(1)
+    })
