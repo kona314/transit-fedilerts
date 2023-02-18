@@ -1,4 +1,4 @@
-import {ActivityPubExpress} from 'activitypub-express'
+import { ActivityPubExpress } from 'activitypub-express'
 import { TransitAlert } from '../models/alert'
 
 /**

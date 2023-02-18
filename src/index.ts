@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv' 
 dotenv.config()
 import express from 'express'
-import syncServicesFromConfigFile from './gtfsrt/syncServices'
+import syncServices from './util/syncServices'
 import { MongoClient } from 'mongodb'
 import ActivityPubExpress, { ApexRoutes } from 'activitypub-express'
-import parseConfig from './gtfsrt/parseConfig'
-import getJobs from './gtfsrt/getJobs'
+import parseConfig from './util/parseConfigFile'
+import getJobs from './alerts/makeRefreshJobs'
 import { ToadScheduler } from 'toad-scheduler'
 import http from 'http'
 import https from 'https'
@@ -165,7 +165,7 @@ client.connect()
     .then((file) => {
         file.services.forEach(s => servicesById[s.identifier] = s)
         return Promise.all([
-            syncServicesFromConfigFile(file, apex),
+            syncServices(file, apex),
             getJobs(file.feeds, apex, client),
         ])
     })

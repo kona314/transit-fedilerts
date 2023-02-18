@@ -1,7 +1,7 @@
-import {ActivityPubExpress, ApexActor} from 'activitypub-express'
+import { ActivityPubExpress, ApexActor } from 'activitypub-express'
 import ConfigFile from '../models/config'
 
-export default async function syncServicesFromConfigFile(file: ConfigFile, apex: ActivityPubExpress) {
+export default async function syncServices(file: ConfigFile, apex: ActivityPubExpress) {
     checkConfigValid(file)
     //return promises for updating/creating services as desired
     return Promise.all(

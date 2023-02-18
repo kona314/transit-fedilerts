@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb"
 import { SimpleIntervalJob, AsyncTask } from "toad-scheduler"
 import { TransitAlert } from "../models/alert"
 import { Feed, FeedRelationToService } from "../models/config"
-import fetchAlerts from "./fetchAllAlerts"
+import fetchAlerts from "./fetchFeed"
 import generateActivityForAlert from "./generateActivityForAlert"
 
 export default async function makeRefreshJobs(feeds: Feed[], apex: ActivityPubExpress, client: MongoClient) {

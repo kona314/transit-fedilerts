@@ -1,4 +1,4 @@
-import {Feed} from "../models/config"
+import { Feed } from "../models/config"
 import getAlertsFromGtfsRt from "../plugins/gtfsrt"
 import getAlertsFromCta from "../plugins/cta"
 
