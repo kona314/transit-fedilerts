@@ -79,7 +79,8 @@ function updatedServiceValues(expected: ApexActor, actual: any) {
  * if possible issues are found.
  */
 function checkConfigValid(file: ConfigFile) {
-    const serviceIds = new Set()
+    const serviceIds = new Set<string>()
+    const serviceIdsWithFeeds = new Set<string>()
     for (let service of file.services) {
         if (serviceIds.has(service.identifier)) {
             throw new Error("service ID " + service.identifier + " appears more than once")
@@ -92,9 +93,14 @@ function checkConfigValid(file: ConfigFile) {
             if (!serviceIds.has(id)) {
                 throw new Error("feed URL " + feed.url + " relates to service ID " + id + ", which does not exist")
             }
+            serviceIdsWithFeeds.add(id)
         }
         if (feed.relatesTo.length == 0) {
             console.warn("feed URL " + feed.url + " does not relate to any feeds")
         }
+    }
+    if (serviceIds.size != serviceIdsWithFeeds.size) {
+        const servicesWithNoFeeds = [...serviceIds].filter(s => !serviceIdsWithFeeds.has(s))
+        console.warn(`service(s) ${servicesWithNoFeeds.join(',')} do(es) not have related feeds`)
     }
 }
