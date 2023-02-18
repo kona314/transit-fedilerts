@@ -1,16 +1,14 @@
 import {ActivityPubExpress} from 'activitypub-express'
-import {transit_realtime} from 'gtfs-realtime-bindings'
+import { TransitAlert } from '../models/alert'
 
 /**
  * Returns an object of type `Note` for the given alert and an activity of type `Create` for the Note.
  */
-export default async function generateActivityForAlert(alert: transit_realtime.IAlert, actor: string, apex: ActivityPubExpress) {
-    const desc = alert.descriptionText?.translation?.[0]?.text 
-    const head = alert.headerText?.translation?.[0]?.text
-    const alertContent = [head, desc].filter(t => t).join("<br><br>").replace(/(?:\r\n|\r|\n)/g, "<br>")
-    const start = alert.activePeriod?.[0]?.start
+export default async function generateActivityForAlert(alert: TransitAlert, actor: string, apex: ActivityPubExpress) {
+    const alertContent = [alert.header, alert.body].filter(t => t).join("<br><br>").replace(/(?:\r\n|\r|\n)/g, "<br>")
+    const start = alert.date
     const now = new Date()
-    const alertDate = start ? new Date(Number(start) * 1000) : now 
+    const alertDate = start ?? now 
     //for simplicity, we're going to flatten down future-dated alerts to now
     //TODO: Find a better way to represent future-dated alerts, maybe this: https://www.w3.org/TR/activitystreams-vocabulary/#dfn-published
     const postDate = alertDate > now ? now : alertDate

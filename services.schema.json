@@ -31,11 +31,16 @@
             "properties": {
                 "url": {
                     "type": "string",
-                    "description": "The URL of the GTFS-realtime alerts feed."
+                    "description": "The URL of the alerts feed."
                 },
                 "headers": {
                     "type": "object",
                     "description": "Any headers to provide with each request. Some feeds require `User-Agent` or `X-Api-Key`, for instance."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The structure of the feed, which defines the plugin to use to parse the data found at `url`. Defaults to `gtfsrt` if undefined.",
+                    "enum": ["gtfsrt", "cta"]
                 },
                 "relatesTo": {
                     "type": "array",
@@ -86,7 +91,7 @@
                 },
                 "directionId": {
                     "$ref": "#/definitions/criteriaValue",
-                    "description": "A direction ID in the alert's informed entities. Per spec, must be used with a `routeId`"
+                    "description": "A direction ID in the alert's informed entities. In GTFS-rt spec, must be used with a `routeId`"
                 },
                 "stopId": {
                     "$ref": "#/definitions/criteriaValue",

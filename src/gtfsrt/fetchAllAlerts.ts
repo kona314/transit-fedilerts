@@ -1,15 +1,19 @@
-import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import {Feed} from "../models/config"
+import getAlertsFromGtfsRt from "../plugins/gtfsrt"
+import getAlertsFromCta from "../plugins/cta"
 
 export default async function fetchFeed(feed: Feed) {
-    const res = await fetch(feed.url, { headers: feed.headers })
-    if (!res.ok) {
-        const error = new Error(`${res.url}: ${res.status} ${res.statusText}`)
-        throw error
+    if (feed.relatesTo.length == 0) {
+        //if feed has no service to talk to, no need to fetch
+        return []
     }
-    const buffer = await res.arrayBuffer()
-    const feedData = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-        new Uint8Array(buffer)
-    )
-    return feedData.entity 
+    const feedType = feed.type ?? "gtfsrt"
+    if (feedType == "gtfsrt") {
+        const res = await getAlertsFromGtfsRt(feed)
+        return res 
+    } else if (feedType == "cta") {
+        const res = await getAlertsFromCta(feed)
+        return res 
+    }
+    throw new Error(`invalid feed type "${feed.type}" defined for ${feed.url}`)
 }

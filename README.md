@@ -1,7 +1,7 @@
 # Transit Fedilerts
-This project distributes alerts from GTFS-realtime Service Alerts feeds via ActivityPub. It's primarily built on top of the [`activitypub-express`](https://github.com/immers-space/activitypub-express) library.
+This project distributes transit alerts via ActivityPub, mainly sourcing from GTFS-realtime Service Alerts feeds. It's primarily built on top of the [`activitypub-express`](https://github.com/immers-space/activitypub-express) library.
 
-Currently, Transit Fedilerts is in alpha. There may be bugs and features are limited. I welcome issues and pull requests! 
+Currently, Transit Fedilerts is in beta. There may be bugs and features are limited. I welcome issues and pull requests! 
 
 The "official" instance lives at [transit.alerts.social](https://transit.alerts.social)
 
@@ -32,7 +32,7 @@ Transit Fedilerts uses `dotenv` for environment variables.
 
 
 ## Example `services.json`
-The config file is intended to be flexible and handle multiple use cases. A service is defined as a single transit entity and translates into an account users can follow, and a feed as a GTFS-rt alerts feed itself. This separation will allow for complex use cases, such as agencies whose alerts might be in multiple feeds or feeds which may contain alerts from multiple agencies.
+The config file is intended to be flexible and handle multiple use cases. A service is defined as a single transit entity and translates into an account users can follow, and a feed as the alerts feed itself. This separation will allow for complex use cases, such as agencies whose alerts might be in multiple feeds or feeds which may contain alerts from multiple agencies.
 
 Here's a simple implementation for a single agency with a single feed:
 ```
@@ -88,6 +88,13 @@ Included in CT's feed are alerts for several Sound Transit routes. Perhaps we wa
 }
 ```
 This will keep all CT-operated service in `commtrans` and also push anything on an ST route to `soundtransit`. We could also add feeds for King County Metro and Pierce Transit (the other operators of ST Express buses) and push those to `soundtransit` based on similar criteria, optionally with additional services for each of them.
+
+
+## Non-GTFS-realtime Alert Feeds
+The goal of this project is primarily to support GTFS-realtime Service Alerts, but some non-standard formats are supported. Some implementation details and contribution guidelines:
+- Each individual plugin exists as a subfolder in `./plugins` with the plugin ID as the folder name 
+- The plugin ID must be defined as literals in `services.schema.json` and `./models/config.ts`
+- The subfolder should include an `index.ts` file with the parse method as the default export
 
 
 # Roadmap
