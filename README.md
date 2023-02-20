@@ -94,6 +94,7 @@ This will keep all CT-operated service in `commtrans` and also push anything on 
 The goal of this project is primarily to support GTFS-realtime Service Alerts, but some non-standard formats are supported. Some implementation details and contribution guidelines:
 - Each individual plugin exists as a subfolder in `./plugins` with the plugin ID as the folder name 
 - The plugin ID must be defined as literals in `services.schema.json` and `./models/config.ts`
+- The plugin case must be handled in `./alerts/fetchFeed.ts`, which returns an array of every found service alert
 - The subfolder should include an `index.ts` file with the parse method as the default export
 
 
