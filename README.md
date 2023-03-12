@@ -7,14 +7,14 @@ The "official" instance lives at [transit.alerts.social](https://transit.alerts.
 
 
 # Usage 
-- Install `transit-fedilerts` and depdencies
+- Clone the `transit-fedilerts` repo and install depdencies
 - Define the agencies/services/feeds to include in `services.json`
   - The structure of this file is documented in the JSON schema format at `services.schema.json` (example below)
   - While the system looks for `services.json` by default, you can define a custom path with the environment variable `SERVICES_JSON`
 - Compile TypeScript and run
 
 ## HTTPS/SSL
-Transit Fedilerts starts up as an HTTP server when `NODE_ENV === 'production'`, but ActivityPub requires HTTPS. A reverse proxy, such as nginx, is required to handle SSL (see more below). In development, provide paths in the `SSL_CERT` and `SSL_KEY` environment variables.
+Transit Fedilerts starts up as an HTTP server, but ActivityPub requires HTTPS. A reverse proxy, such as nginx, is recommended to provide SSL support. Setting `DOMAIN` to `localhost` will introduce problems; for local development, consider [ngrok](https://ngrok.com) or other options that provide temporary domain names with SSL. 
 
 
 ## Environment Variables 
@@ -27,8 +27,6 @@ Transit Fedilerts uses `dotenv` for environment variables.
 | `NO_FETCH_ALERTS` | | When present, the alert fetchers won't run. Useful for testing other components |
 | `PORT` | | Port to run the server on. Defaults to `8080` |
 | `SERVICES_JSON` | | Custom path to a services configuration file. Defaults to `services.json` |
-| `SSL_CERT` | | Path to an SSL certificate, used in development mode |
-| `SSL_KEY` | | Path to an SSL public key, used in development mode |
 
 
 ## Example `services.json`
