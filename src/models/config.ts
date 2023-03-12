@@ -15,6 +15,7 @@ export interface Feed {
     url : string 
     headers?: any 
     relatesTo : FeedRelationToService[]
+    pollInterval?: number
     type?: "gtfsrt" | "cta"
 }
 

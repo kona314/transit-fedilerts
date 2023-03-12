@@ -42,6 +42,11 @@
                     "description": "The structure of the feed, which defines the plugin to use to parse the data found at `url`. Defaults to `gtfsrt` if undefined.",
                     "enum": ["gtfsrt", "cta"]
                 },
+                "pollInterval": {
+                    "type": "number",
+                    "description": "Time, in minutes, between each each request to this URL. Defaults to `5` if undefined.",
+                    "default": 5
+                },
                 "relatesTo": {
                     "type": "array",
                     "description": "All services this feed should populate. A service defined as just the service ID will receive all alerts from this feed. If defined as an object with a valid `criteria` property, only alerts that match the criteria will be sent to that service.",
