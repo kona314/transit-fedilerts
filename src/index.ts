@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv' 
 dotenv.config()
 import express from 'express'
+import path from 'path'
 import syncServices from './util/syncServices'
 import { MongoClient } from 'mongodb'
 import ActivityPubExpress, { ApexRoutes } from 'activitypub-express'
@@ -45,6 +46,14 @@ const apex = ActivityPubExpress({
 
 const client = new MongoClient(process.env.MONGO_URI ?? 'mongodb://localhost:27017')
 
+const serveActorPage = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (!req.accepts('html')) {
+        return next()
+    }
+    //verify actor exists first
+    res.sendFile(path.join(__dirname, '../public/actor.html'))
+}
+
 app.use(
     express.json({ type: apex.consts.jsonldTypes }),
     express.urlencoded({ extended: true }),
@@ -55,13 +64,9 @@ app.route(routes.inbox)
     .get(apex.net.inbox.get)
     .post(apex.net.inbox.post)
 app.route(routes.outbox)
-    .get((_req:any, _res:any, next:any) => {
-        console.log()
-        next()
-    })
     .get(apex.net.outbox.get)
     .post(apex.net.outbox.post)
-app.get(routes.actor, apex.net.actor.get)
+app.get(routes.actor, serveActorPage, apex.net.actor.get)
 app.get(routes.followers, apex.net.followers.get)
 app.get(routes.following, apex.net.following.get)
 app.get(routes.liked, apex.net.liked.get)
@@ -77,7 +82,11 @@ app.on('apex-outbox', (msg: any) => {
     console.log(`[OUTBOX] New ${msg.object.type} from ${msg.actor}`)
 })
 app.on('apex-inbox', async (msg: any) => {
-    console.log(`New ${msg.object.type} from ${msg.actor.id} to ${msg.recipient.id}`)
+    if (!msg.actor || !msg.recipient || !msg.activity) {
+        return 
+    }
+    const info = `${msg.activity.type} activity${msg.object ? ` on ${msg.activity.type}` : ``}`
+    console.log(`New ${info} from ${msg.actor.id} to ${msg.recipient.id}`)
     const {activity, recipient, actor} = msg 
     switch (activity.type.toLowerCase()) {
         // automatically accept follow requests

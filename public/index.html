@@ -67,7 +67,7 @@
                 const name = document.createElement("td")
                 name.innerText = account.name 
                 const username = document.createElement("td")
-                username.innerText = account.id 
+                username.innerHTML = "<a href=\"u/" + account.id + "\">" + account.id + "</a>"
                 const count = document.createElement("td")
                 count.innerText = account.posts 
                 const notes = document.createElement("td")
