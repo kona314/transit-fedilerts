@@ -59,13 +59,15 @@
                     alertText.innerHTML = alert.content 
                     alertText.className = "card-body card-text"
 
-                    const dateText = document.createElement("div")
+                    const dateText = document.createElement("a")
                     const date = new Date(alert.published)
                     dateText.className = "card-footer text-muted small"
-                    dateText.innerText = date.toLocaleString(undefined, {
+                    const dateString = date.toLocaleString(undefined, {
                         dateStyle: "full",
                         timeStyle: "short",
                     })
+                    dateText.innerText = dateString
+                    dateText.href = post.id
 
                     const alertEl = document.createElement("div")
                     alertEl.className = "card mb-3"

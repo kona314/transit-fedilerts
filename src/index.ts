@@ -54,6 +54,14 @@ const serveActorPage = (req: express.Request, res: express.Response, next: expre
     res.sendFile(path.join(__dirname, '../public/actor.html'))
 }
 
+const serveAcitivityPage = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (!req.accepts('html')) {
+        return next()
+    }
+    //verify actor exists first
+    res.sendFile(path.join(__dirname, '../public/activity.html'))
+}
+
 app.use(
     express.json({ type: apex.consts.jsonldTypes }),
     express.urlencoded({ extended: true }),
@@ -71,7 +79,7 @@ app.get(routes.followers, apex.net.followers.get)
 app.get(routes.following, apex.net.following.get)
 app.get(routes.liked, apex.net.liked.get)
 app.get(routes.object, apex.net.object.get)
-app.get(routes.activity, apex.net.activityStream.get)
+app.get(routes.activity, serveAcitivityPage, apex.net.activityStream.get)
 app.get(routes.shares, apex.net.shares.get)
 app.get(routes.likes, apex.net.likes.get)
 app.get('/.well-known/webfinger', apex.net.webfinger.get)
